@@ -1,14 +1,24 @@
-/**
- * Find local maxima in an Image (or ROI) using the algorithm described in
- * Neubeck and Van Gool. Efficient non-maximum suppression. 
- * Pattern Recognition (2006) vol. 3 pp. 850-855
- *
- * Jonas Ries brought this to my attention and send me C code implementing one of the
- * described algorithms
- *
- *
- *
- */
+///////////////////////////////////////////////////////////////////////////////
+//FILE:          FindLocalMaxima.java
+//PROJECT:       SpotCounter
+//-----------------------------------------------------------------------------
+//
+// AUTHOR:       Nico Stuurman
+//
+// COPYRIGHT:    University of California, San Francisco 2015
+//
+// LICENSE:      This file is distributed under the BSD license.
+//               License text is included with the source distribution.
+//
+//               This file is distributed in the hope that it will be useful,
+//               but WITHOUT ANY WARRANTY; without even the implied warranty
+//               of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+//               IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+//               CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//               INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
+
+
 
 package edu.ucsf.valelab.spotCounter.algorithm;
 
@@ -20,17 +30,47 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 
 
+
 /**
+ * Find local maxima in an Image (or ROI) using the algorithm described in
+ * Neubeck and Van Gool. Efficient non-maximum suppression. 
+ * Pattern Recognition (2006) vol. 3 pp. 850-855
  *
- * @author nico
+ * Jonas Ries brought this to my attention and send me C code implementing one of the
+ * described algorithms
+ *
+ *
+ *
  */
 public class FindLocalMaxima {
    private static final GaussianBlur filter_ = new GaussianBlur();
    private static final ImageCalculator ic_ = new ImageCalculator();
    
    public enum FilterType {
-      NONE,
-      GAUSSIAN1_5
+      NONE ("None"),
+      GAUSSIAN1_5("Gaussian1_5");
+      
+      private final String s_;
+      
+      FilterType (String s) {
+         this.s_ = s;
+      }
+      
+      @Override
+      public String toString() {
+         return s_;
+      }
+      
+      public static FilterType equals (String s) {
+         if (s.equals(NONE.toString())) {
+            return NONE;
+         }
+         if (s.equals(GAUSSIAN1_5.toString())) {
+            return GAUSSIAN1_5;
+         }
+         return null;
+      }
+      
    }
 
    /**
@@ -43,9 +83,13 @@ public class FindLocalMaxima {
     * @param filterType - Prefilter the image.  Either none or Gaussian1_5
     * @return Polygon with maxima 
     */
-   public static Polygon FindMax(ImageProcessor iProc, int n, int threshold, FilterType filterType) {
+   public static Polygon FindMax(
+           ImageProcessor iProc, 
+           int n, 
+           int threshold, 
+           FilterType filterType) {
+      
       Polygon maxima = new Polygon();
-
       Rectangle roi = iProc.getRoi();
       
       // Prefilter if needed
@@ -72,12 +116,12 @@ public class FindLocalMaxima {
       int xEnd = xRealEnd - n;
       int yRealEnd = roi.y + roi.height;
       int yEnd = yRealEnd - n;
-      for (int i=roi.x; i <= xEnd - n - 1; i+=n2) {
-         for (int j=roi.y; j <= yEnd - n - 1; j+=n2) {
+      for (int i=roi.x + n/2; i < xEnd; i+=n2) {
+         for (int j=roi.y + n/2; j < yEnd; j+=n2) {
             int mi = i;
             int mj = j;
-            for (int i2=i; i2 < i + n2 && i2 < xRealEnd; i2++) {
-               for (int j2=j; j2 < j + n2 && j2 < yRealEnd; j2++) {
+            for (int i2=i; i2 < i + n2 && i2 < xRealEnd - n/2; i2++) {
+               for (int j2=j; j2 < j + n2 && j2 < yRealEnd - n/2; j2++) {
                   // revert getPixel to get after debugging
                   if (iProc.getPixel(i2, j2) > iProc.getPixel(mi, mj)) {
                      mi = i2;

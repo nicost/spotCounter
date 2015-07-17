@@ -1,4 +1,4 @@
-package edu.ucaf.valelab.spotCounter;
+package edu.ucsf.valelab.spotCounter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
