@@ -8,7 +8,7 @@
 
   <name>spotCounter</name>
   <url>http://valelab.ucsf.edu/~nico/ijplugins</url>
-  <description>An ImageJ plugin to count number of spots per frame and to measure average intensity per spot</description>
+  <description>An ImageJ plugin to count the number of spots per frame and to measure the average intensity per spot in Stacks</description>
   <properties>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
