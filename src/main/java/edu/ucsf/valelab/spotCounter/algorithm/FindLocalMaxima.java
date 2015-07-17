@@ -37,16 +37,15 @@ public class FindLocalMaxima {
     * Static utility function to find local maxima in an Image
     * 
     * 
-    * @param iPlus - ImagePlus object in which to look for local maxima
+    * @param iProc - ImageProcessor object in which to look for local maxima
     * @param n - minimum distance to other local maximum
     * @param threshold - value below which a maximum will be rejected
     * @param filterType - Prefilter the image.  Either none or Gaussian1_5
     * @return Polygon with maxima 
     */
-   public static Polygon FindMax(ImagePlus iPlus, int n, int threshold, FilterType filterType) {
+   public static Polygon FindMax(ImageProcessor iProc, int n, int threshold, FilterType filterType) {
       Polygon maxima = new Polygon();
 
-      ImageProcessor iProc = iPlus.getProcessor();
       Rectangle roi = iProc.getRoi();
       
       // Prefilter if needed
