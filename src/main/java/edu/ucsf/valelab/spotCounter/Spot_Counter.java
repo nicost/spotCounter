@@ -37,6 +37,11 @@ import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 
 /**
  * Simple ImageJ plugin written to facilitate Marvin Tananbaum's project.
@@ -45,12 +50,13 @@ import java.awt.Rectangle;
  *
  */
 public class Spot_Counter implements 
-        ExtendedPlugInFilter, DialogListener, ij.ImageListener
+        ExtendedPlugInFilter, DialogListener, ij.ImageListener, ClipboardOwner
 { 
    private static final int flags_ = DOES_STACKS + DOES_8G + DOES_16 + NO_CHANGES; 
    private static int boxSize_ = 6;
    private static int noiseTolerance_ = 1000;
    private static boolean checkSettings_ = false;
+   private static boolean outputToClipboard_;
    private static FindLocalMaxima.FilterType filter_ = 
            FindLocalMaxima.FilterType.NONE;
    
@@ -74,6 +80,7 @@ public class Spot_Counter implements
       gd_.addNumericField("BoxSize: ", boxSize_, 0);
       gd_.addNumericField("Noise tolerance", noiseTolerance_, 0);
       gd_.addCheckbox("Check Settings", checkSettings_);
+      gd_.addCheckbox("Output to Clipboard", outputToClipboard_);
       gd_.addDialogListener(this);
       ImagePlus.addImageListener(this);
       
@@ -90,8 +97,8 @@ public class Spot_Counter implements
       boxSize_ = (int) gd_.getNextNumber();
       noiseTolerance_ = (int) gd_.getNextNumber();
       filter_ = FindLocalMaxima.FilterType.equals(preFilterChoice_);
-      Checkbox cb = (Checkbox) gd_.getCheckboxes().get(0);
-      checkSettings_ = cb.getState();
+      checkSettings_ = ((Checkbox) gd_.getCheckboxes().get(0)).getState();
+      outputToClipboard_ = ((Checkbox) gd_.getCheckboxes().get(1)).getState();
    }
 
    @Override
@@ -143,8 +150,17 @@ public class Spot_Counter implements
          }
          res_.addValue("Image mean", ip.getStatistics().mean);
          
-         if (pasN_ == nPasses_)
+         if (pasN_ == nPasses_) {
             res_.show("Results for " + imgPlus_.getTitle());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String output = new String();
+            for (int i = 0; i < res_.size(); i++) {
+               output += "" + (i + 1) + "\t" + res_.getValue("n", i) + "\t" + 
+                       res_.getValue("Spot mean", i) + "\t" + 
+                       res_.getValue("Image mean", i) + "\n";
+            }
+            clipboard.setContents(new StringSelection(output), this);
+         }
       }  
       
    }
@@ -209,6 +225,11 @@ public class Spot_Counter implements
          Overlay ov = getSpotOverlay(imgPlus_.getProcessor());
          imgPlus_.setOverlay(ov);
       }
+   }
+
+   @Override
+   public void lostOwnership(Clipboard clpbrd, Transferable t) {
+         // Nice!  Someone used our clipboard content
    }
 
 }
