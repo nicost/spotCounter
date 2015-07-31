@@ -72,6 +72,7 @@ public class Spot_Counter implements
    public int showDialog(ImagePlus ip, String string, PlugInFilterRunner pifr) {
       imgPlus_ = ip;
       gd_ = new NonBlockingGenericDialog("Spot Counter");
+      gd_.addHelp("http://imagej.net/SpotCounter");
       String prefilters[] = { 
          FindLocalMaxima.FilterType.NONE.toString(), 
          FindLocalMaxima.FilterType.GAUSSIAN1_5.toString() 
