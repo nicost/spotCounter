@@ -52,7 +52,7 @@ import java.awt.datatransfer.Transferable;
 public class Spot_Counter implements 
         ExtendedPlugInFilter, DialogListener, ij.ImageListener, ClipboardOwner
 { 
-   private static final int flags_ = DOES_STACKS + DOES_8G + DOES_16 + NO_CHANGES; 
+   private static final int FLAGS = DOES_STACKS + DOES_8G + DOES_16 + NO_CHANGES; 
    private static int boxSize_ = 6;
    private static int noiseTolerance_ = 1000;
    private static boolean checkSettings_ = false;
@@ -90,7 +90,7 @@ public class Spot_Counter implements
       gd_.showDialog();
 
       
-      return flags_; 
+      return FLAGS; 
    }
    
    private void checkDialog() {
@@ -110,7 +110,7 @@ public class Spot_Counter implements
 
    @Override
    public int setup(String string, ImagePlus ip) {
-      return flags_;
+      return FLAGS;
    }
 
    @Override
@@ -155,7 +155,10 @@ public class Spot_Counter implements
             res_.show("Results for " + imgPlus_.getTitle());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             String output = new String();
-            for (int i = 0; i < res_.size(); i++) {
+            // difficult way to get size of the resultstable to stay compatible
+            // with older ij.jar versions taht do not have res_.size()
+            int size = res_.getColumn(0).length;
+            for (int i = 0; i < size; i++) {
                output += "" + (i + 1) + "\t" + res_.getValue("n", i) + "\t" + 
                        res_.getValue("Spot mean", i) + "\t" + 
                        res_.getValue("Image mean", i) + "\n";
