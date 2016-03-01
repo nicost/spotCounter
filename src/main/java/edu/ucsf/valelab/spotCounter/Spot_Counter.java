@@ -202,12 +202,25 @@ public class Spot_Counter implements
               ip, boxSize_, noiseTolerance_, filter_);
       int halfSize = boxSize_ / 2;
       Overlay ov = new Overlay();
+      Roi imageRoi = ij.IJ.getImage().getRoi();
+      ImageProcessor mask = null;
+      if (imageRoi != null) {
+         mask = imageRoi.getMask();
+      }
       for (int i = 0; i < pol.npoints; i++) {
          int x = pol.xpoints[i];
          int y = pol.ypoints[i];
-         Roi roi = new Roi(x - halfSize, y - halfSize, boxSize_, boxSize_);
-         roi.setStrokeColor(Color.RED);
-         ov.add(roi);
+         boolean use = true;
+         if (mask != null && ip.getRoi() != null) {
+            if (mask.get(x - ip.getRoi().x, y - ip.getRoi().y) == 0) {
+               use = false;
+            }
+         }
+         if (use) {
+            Roi roi = new Roi(x - halfSize, y - halfSize, boxSize_, boxSize_);
+            roi.setStrokeColor(Color.RED);
+            ov.add(roi);
+         }
       }
       return ov;
    }
