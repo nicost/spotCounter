@@ -44,7 +44,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
 /**
- * Simple ImageJ plugin written to facilitate Marvin Tananbaum's project.
+ * Simple ImageJ plugin written to facilitate Marvin Tanenbaum's project.
  * This plugin finds local maxima, and outputs the number of local maxima
  * found, as well as the average intensity of all "spots" per frame
  *
@@ -156,7 +156,7 @@ public class Spot_Counter implements
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             String output = new String();
             // difficult way to get size of the resultstable to stay compatible
-            // with older ij.jar versions taht do not have res_.size()
+            // with older ij.jar versions that do not have res_.size()
             int size = res_.getColumn(0).length;
             for (int i = 0; i < size; i++) {
                output += "" + (i + 1) + "\t" + res_.getValue("n", i) + "\t" + 
@@ -193,7 +193,7 @@ public class Spot_Counter implements
    }
 
    /**
-    * Finds local maxima and returns them as an collaction of Rois (an overlay)
+    * Finds local maxima and returns them as an collection of Rois (an overlay)
     * @param ip - ImageProcessor to be analyzed
     * @return overlay with local maxima
     */
