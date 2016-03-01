@@ -1,1 +1,1 @@
-cp target/spot_Counter-0.1.jar /Applications/Fiji.app/plugins/
+cp target/spot_Counter-*.jar /Applications/Fiji.app/plugins/
