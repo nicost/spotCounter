@@ -4,7 +4,7 @@
   <groupId>edu.ucsf.valelab.spotCounter</groupId>
   <artifactId>spot_Counter</artifactId>
   <packaging>jar</packaging>
-  <version>0.11</version>
+  <version>0.12</version>
 
   <name>spotCounter</name>
   <url>http://valelab.ucsf.edu/~nico/ijplugins</url>
