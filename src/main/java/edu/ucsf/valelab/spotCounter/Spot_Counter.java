@@ -54,7 +54,7 @@ public class Spot_Counter implements
         ExtendedPlugInFilter, DialogListener, ij.ImageListener, ClipboardOwner
 { 
    private static final int FLAGS = DOES_STACKS + DOES_8G + DOES_16 + NO_CHANGES;
-   private static final String VERSION = "0.12";
+   private static final String VERSION = "0.13";
    private final String BOXSIZEKEY = "BoxSize";
    private static int boxSize_ = 6;
    private final String NOISETOLERANCEKEY = "NoiseTolerance";
@@ -65,6 +65,8 @@ public class Spot_Counter implements
    private static boolean outputToClipboard_;
    private final String OUTPUTALLSPOTSKEY = "OutputAllSpots";
    private static boolean outputAllSpots_ = false;
+   private final String APPENDOUTPUT = "AppendOutput";
+   private static boolean appendOutput_ = false;
    private static FindLocalMaxima.FilterType filter_ = 
            FindLocalMaxima.FilterType.NONE;
    
@@ -101,6 +103,8 @@ public class Spot_Counter implements
       gd_.addCheckbox("Output to Clipboard", outputToClipboard_);
       outputAllSpots_ = prefs_.getBoolean(OUTPUTALLSPOTSKEY, outputAllSpots_);
       gd_.addCheckbox("Output all spots", outputAllSpots_);
+      appendOutput_ = prefs_.getBoolean(APPENDOUTPUT, appendOutput_);
+      gd_.addCheckbox("Append new results", appendOutput_);
       gd_.addDialogListener(this);
       ImagePlus.addImageListener(this);
       
@@ -120,6 +124,7 @@ public class Spot_Counter implements
       checkSettings_ = ((Checkbox) gd_.getCheckboxes().get(0)).getState();
       outputToClipboard_ = ((Checkbox) gd_.getCheckboxes().get(1)).getState();
       outputAllSpots_ = ((Checkbox) gd_.getCheckboxes().get(2)).getState();
+      appendOutput_ = ((Checkbox) gd_.getCheckboxes().get(3)).getState();
       
       // Store settings in preferences so that they can be restored
       prefs_.putInt(BOXSIZEKEY, boxSize_);
@@ -127,6 +132,7 @@ public class Spot_Counter implements
       prefs_.putBoolean(CHECKSETTINGSKEY, checkSettings_);
       prefs_.putBoolean(OUTPUTTOCLIPBOARDKEY, outputToClipboard_);
       prefs_.putBoolean(OUTPUTALLSPOTSKEY, outputAllSpots_);
+      prefs_.putBoolean(APPENDOUTPUT, appendOutput_);
    }
 
    @Override
@@ -156,7 +162,12 @@ public class Spot_Counter implements
       if (gd_.wasOKed()) {
          Overlay ov = getSpotOverlay(ip);
          if (start_) {
-            res_ = new ResultsTable();
+            if (appendOutput_) {
+               res_ = ResultsTable.getResultsTable();
+            }
+            if (res_ == null) {
+               res_ = new ResultsTable();
+            }
             if (outputAllSpots_) {
                res2_ = new ResultsTable();
             }
@@ -165,6 +176,9 @@ public class Spot_Counter implements
             start_ = false;
          }
          res_.incrementCounter();
+         if (appendOutput_) {
+            res_.addValue("File", imgPlus_.getTitle());
+         }
          pasN_ +=1;
          res_.addValue("n", ov.size());
          if (ov.size() > 0) {
@@ -187,21 +201,29 @@ public class Spot_Counter implements
          res_.addValue("Image mean", ip.getStatistics().mean);
          
          if (pasN_ == nPasses_) {
-            res_.show("Results for " + imgPlus_.getTitle());
+            if (appendOutput_) {
+               res_.show("Results");
+            } else {
+               res_.show("Results for " + imgPlus_.getTitle());
+            }
             if (outputAllSpots_) {
                res2_.show("All spots for " + imgPlus_.getTitle());
             }
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            String output = new String();
+            StringBuilder output = new StringBuilder();
             // difficult way to get size of the resultstable to stay compatible
             // with older ij.jar versions that do not have res_.size()
             int size = res_.getColumn(0).length;
             for (int i = 0; i < size; i++) {
-               output += "" + (i + 1) + "\t" + res_.getValue("n", i) + "\t" + 
-                       res_.getValue("Spot mean", i) + "\t" + 
-                       res_.getValue("Image mean", i) + "\n";
+               if (appendOutput_) {
+                  output.append(imgPlus_.getTitle()).append("\t");
+               }
+               output.append( (i + 1) ).append("\t"). 
+                      append(res_.getValue("n", i)).append("\t"). 
+                      append(res_.getValue("Spot mean", i)).append("\t").
+                      append(res_.getValue("Image mean", i)).append("\n");
             }
-            clipboard.setContents(new StringSelection(output), this);
+            clipboard.setContents(new StringSelection(output.toString()), this);
          }
       }  
       
