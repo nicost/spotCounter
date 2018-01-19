@@ -54,7 +54,7 @@ public class Spot_Counter implements
         ExtendedPlugInFilter, DialogListener, ij.ImageListener, ClipboardOwner
 { 
    private static final int FLAGS = DOES_STACKS + DOES_8G + DOES_16 + NO_CHANGES;
-   private static final String VERSION = "0.13";
+   private static final String VERSION = "0.14";
    private final String BOXSIZEKEY = "BoxSize";
    private static int boxSize_ = 6;
    private final String NOISETOLERANCEKEY = "NoiseTolerance";

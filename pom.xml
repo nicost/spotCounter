@@ -4,14 +4,57 @@
   <groupId>edu.ucsf.valelab.spotCounter</groupId>
   <artifactId>spot_Counter</artifactId>
   <packaging>jar</packaging>
-  <version>0.13</version>
-
+  <version>0.14</version>
   <name>spotCounter</name>
+  <inceptionYear>2015</inceptionYear>
+   <organization>
+      <name>Vale laboratory, University of California, San Francisco, and Howard Hughes Medical Institute
+      </name>
+      <url>https://valelab.ucsf.edu</url>
+  </organization>
   <url>http://valelab.ucsf.edu/~nico/ijplugins</url>
   <description>An ImageJ plugin to count the number of spots per frame and to measure the average intensity per spot in Stacks</description>
+  <licenses>
+      <license>
+          <name>BSD 2-clause</name>
+          <url>https://opensource.org/licenses/bsd-license.php</url>
+      </license>
+  </licenses>
+  <developers>
+      <developer>
+          <name>Nico Stuurman</name>
+      </developer>
+  </developers>
+  <contributors>
+      <contributor>
+          <name>Marvin Tanenbaum</name>
+      </contributor>
+  </contributors> 
+  <mailingLists>
+      <mailingList>
+          <name>None</name>
+      </mailingList>
+  </mailingLists>  
+  <scm>
+      <url>https://github.com/nicost/spotCounter/</url>
+  </scm>
+  <issueManagement>
+      <url>https://github.com/nicost/spotCounter/issues</url>
+  </issueManagement>
+  <ciManagement><url>none</url></ciManagement>
+  
   <properties>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     <license.licenseName>BSD 2-clause</license.licenseName>
+     <license.copyrightOwners>Regents of the Univeristy of California</license.copyrightOwners>
   </properties>
+
+  <parent>
+      <groupId>org.scijava</groupId>
+      <artifactId>pom-scijava</artifactId>
+      <version>19.0.0</version>
+      <relativePath />
+  </parent>
 
   <build>
      <plugins>
@@ -34,14 +77,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
        <groupId>net.imagej</groupId>
        <artifactId>ij</artifactId>
-       <version>1.49v</version>
     </dependency>
 
   </dependencies>
